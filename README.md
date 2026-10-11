@@ -1,58 +1,157 @@
 # Battle Arena Command Center
 
-A local dashboard for the Innov8 4.0 Battle Arena agent, combining the supplied HTML demo UI with a read-only Python bridge to the agent's checkpoint and decision logs.
+Hi, I'm **Aaditya Raj**, a CSE student and the **team leader of Team
+Vibranium Coders**. Our team was selected for the **Innov8 4.0 finals at
+IIT Delhi**, organised around the Eightfold.ai × ARIES Battle Arena
+challenge.
 
-## What's included
+I built this project as part of my work on the finale problem: an
+autonomous agent that competes in a live hiring market, along with a
+dashboard that helps me inspect its workflow and local decision records.
 
-- `frontend/index.html` — original dashboard UI, with a new **Live Agent** tab.
-- `agent.py` and `arena_client.py` — the Python agent and Arena API client.
-- `dashboard_server.py` — standard-library local web server that serves the UI and read-only status/state/log endpoints.
-- `start-dashboard.ps1` — Windows PowerShell launcher.
+## Innov8 4.0 Finals --- IIT Delhi
 
-## 1. Run the dashboard (no Arena key required)
+As the leader of Team Vibranium Coders, I worked on our approach to the
+Innov8 4.0 finale challenge. Unlike a fixed-file ranking task, the
+finale involved a live, shared candidate market where multiple
+autonomous agents competed for the same people.
 
-Open PowerShell in this folder and run:
+This repository contains the Python agent implementation and a local
+command-center dashboard for inspecting the project. The dashboard is a
+development and monitoring aid; it does not itself execute the live
+agent.
 
-```powershell
+## The finale problem statement
+
+The Innov8 4.0 Battle Arena finale asked us to build an autonomous agent
+for a live hiring market with **1,000,000 candidate profiles** and
+multiple teams searching the same pool.
+
+The agent needed to:
+
+-   Find candidates who match open requisitions.
+-   Decide when search results are enough and when a full profile or
+    assessment is worth paying for.
+-   Evaluate candidate fit from incomplete and sometimes messy profile
+    information.
+-   Make offers before other agents sign the same candidates.
+-   Track the credit budget and avoid spending when the likely points do
+    not justify the cost.
+
+The objective was to earn as many points as possible while keeping
+credit use low. The official finale brief defines the arena score as:
+
+`points from candidates held at the end - (credits used × penalty factor)`
+
+The agent is expected to make decisions autonomously during the arena
+window. This repository contains my implementation and a supporting
+dashboard for the challenge.
+
+## What's in this repository?
+
+-   `agent.py` --- the Python agent and its decision workflow.
+-   `arena_client.py` --- the client used to communicate with the Battle
+    Arena API.
+-   `dashboard_server.py` --- a small local server for the dashboard and
+    read-only local state endpoints.
+-   `frontend/index.html` --- the dashboard UI.
+-   `start-dashboard.ps1` --- starts the dashboard on Windows.
+-   `.env.example` --- example environment-variable configuration
+    without a real API key.
+
+## How the agent approaches the task
+
+The agent is designed to work through the market in stages:
+
+1.  **Recon and search:** inspect open requisitions and search broadly
+    for possible matches.
+2.  **Candidate evaluation:** compare skills and role requirements, then
+    spend more credits on profiles or assessments only when useful.
+3.  **Offer planning:** prioritize stronger candidates and keep
+    alternatives available.
+4.  **Market and closing decisions:** track the market, available slots,
+    and remaining budget, and avoid offers that do not make economic
+    sense.
+
+The code saves its checkpoint in `state/state.json` and appends decision
+records to `state/decisions.jsonl`, using the configured `STATE_DIR`.
+
+## Dashboard
+
+I also made a local dashboard so I can inspect the project more easily.
+
+The dashboard has sections for:
+
+-   Overview and demo simulation
+-   Candidate Explorer
+-   Requisition Pipeline
+-   Decision Intelligence
+-   Activity Logs
+-   System Configuration
+-   Live Agent status
+
+The demo simulation uses **sample data**. The Live Agent tab reads local
+checkpoint and log files through a read-only bridge. The bridge itself
+does not call the Arena API, spend credits, or submit offers.
+
+I tested the dashboard locally with sample checkpoint and log files.
+That confirms the dashboard can read those files; it does **not** mean
+the live Arena agent has been run or verified.
+
+## Run the dashboard on Windows
+
+From the project folder, open PowerShell and run:
+
+``` powershell
+.\start-dashboard.ps1
+```
+
+Then open:
+
+<http://127.0.0.1:8765>
+
+If PowerShell blocks the script for the current session, run:
+
+``` powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\start-dashboard.ps1
 ```
 
-Then open **http://127.0.0.1:8765**. The demo pages work without a key. Select **Live Agent** to check for local state. Until the agent has run and written `state/state.json` and `state/decisions.jsonl`, the live section will show that no checkpoint is available.
+To stop the server, press `Ctrl+C` in the PowerShell window where it is
+running.
 
-## 2. Connect it to the Python agent
+## Configuration and safety
 
-The dashboard and agent must use the same `STATE_DIR`. The default is `./state` relative to this project directory. The dashboard only reads these local files; it does not invoke the agent or call the Arena API.
+1.  Keep any real `.env` file out of Git.
+2.  Set `ARENA_KEY` only when you have an authorized key and are ready
+    to run the agent.
+3.  The dashboard server and the agent are separate processes.
+    Publishing this repository to GitHub does not start the Python agent
+    or make the local dashboard bridge available online.
+4.  Do not run `agent.py` against the live Arena unless you understand
+    that it can make API calls, consume credits, and submit offers.
 
-If the organisers have issued an Arena key and authorised the agent to run, open a **second PowerShell window** in this project directory:
+The local dashboard can be used in demo mode without Arena credentials.
 
-```powershell
-$env:ARENA_URL = "https://innov8-battle-arena.onrender.com"
-$env:ARENA_KEY = Read-Host "Paste the authorised Arena key"
-$env:STATE_DIR = (Join-Path $PWD "state")
-$env:PENALTY_FACTOR = "0.05"
-python .\agent.py
-```
+## Current status
 
-Set `PENALTY_FACTOR` to the value actually announced by the organisers; `0.05` is only the code's fallback. Keep the agent terminal open. The Live Agent tab can then read its checkpoint and decision log. The key is read from the PowerShell environment and is never displayed by the dashboard. Do not put the key in source code, HTML, `.env` committed to Git, screenshots, or public repositories.
+-   Dashboard UI: tested locally.
+-   Read-only state and log endpoints: tested with local sample files.
+-   Live Arena API execution: not verified as part of the dashboard
+    test.
+-   GitHub Pages: the workflow is included, but deployment still needs
+    to be checked in the repository's Actions and Pages settings.
 
-**Important:** `agent.py` is an autonomous agent. Once launched with a valid key it can make metered API calls and submit offers when the Arena phase permits. Do not launch it just to test the UI. The dashboard bridge itself is read-only and does not start or stop the agent.
+## Project goal
 
-## 3. Test the Python files
+My goal with this project is to build a clear, practical view of the
+agent's workflow and make the decision process easier to inspect. I'll
+keep improving the agent, its evaluation logic, and the dashboard as I
+test more of the system.
 
-```powershell
-python -m py_compile .\agent.py .\arena_client.py .\dashboard_server.py
-```
+------------------------------------------------------------------------
 
-## Publish the static demo on GitHub Pages
-
-1. Push this project to a GitHub repository on the `main` branch.
-2. In the repository, open **Settings → Pages** and set the build/deployment source to **GitHub Actions**.
-3. The included `.github/workflows/pages.yml` deploys the `frontend/` folder on each push to `main`. Check the repository's **Actions** tab for the deployment URL.
-4. GitHub Pages only hosts the static demo UI. Its **Live Agent** tab cannot reach the local Python bridge from a public page, so use the local server for live checkpoint/log data.
-
-## Hosting notes
-
-- The dashboard is intentionally bound to `127.0.0.1` by default. It is for local development, not public hosting.
-- GitHub Pages can host the static demo (`frontend/index.html`) but cannot run the Python bridge or read the agent's local files.
-- To host a live dashboard remotely, deploy the bridge privately with authentication and HTTPS first. Do not expose this unauthenticated read-only server to the public internet.
+**Author:** Aaditya Raj\
+**Role:** Team Leader, Vibranium Coders\
+**Finale:** Innov8 4.0 --- IIT Delhi\
+**Challenge:** Eightfold.ai × ARIES Battle Arena
