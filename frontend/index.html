@@ -1,0 +1,137 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Battle Arena Command Center (Demo)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#0a0a0d;--s1:#111116;--s2:#17171e;--bd:#25252f;--tx:#e8e8ee;--mu:#8a8a99;--vi:#8b5cf6;--cy:#22d3ee;--em:#10b981;--am:#f59e0b;--rd:#ef4444;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--tx);font:13px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+.app{display:flex;min-height:100vh}aside{width:210px;background:var(--s1);border-right:1px solid var(--bd);padding:14px 10px;display:flex;flex-direction:column;gap:2px;position:sticky;top:0;height:100vh;flex-shrink:0}
+.brand b{letter-spacing:.12em;font-size:13px}.brand small{display:block;color:var(--mu);font-size:10px;letter-spacing:.2em;margin-bottom:14px}
+nav button{all:unset;cursor:pointer;display:block;padding:7px 10px;border-radius:6px;color:var(--mu);width:calc(100% - 20px)}nav button:hover{background:var(--s2);color:var(--tx)}nav button.on{background:#8b5cf622;color:#c4b5fd}
+.foot{margin-top:auto;color:var(--mu);font-size:11px;border-top:1px solid var(--bd);padding-top:10px}
+main{flex:1;min-width:0;padding:16px 20px}.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:18px;margin:0}h2{font-size:12px;margin:0 0 8px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em}
+.badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;border:1px solid var(--bd);color:var(--mu)}
+.demo{color:var(--am);border-color:#f59e0b66;background:#f59e0b14;font-weight:600}.g{color:var(--em);border-color:#10b98166}.r{color:var(--rd);border-color:#ef444466}.a{color:var(--am);border-color:#f59e0b66}.c{color:var(--cy);border-color:#22d3ee66}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:12px;margin-bottom:12px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.grid.w{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.kpi .v{font-size:24px;font-weight:600}.kpi .l{color:var(--mu);font-size:11px}
+button.b{background:var(--s2);color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;cursor:pointer;font:inherit}button.b:hover{border-color:var(--vi)}button.p{background:var(--vi);border-color:var(--vi)}button:disabled{opacity:.4;cursor:not-allowed}
+input,select{background:var(--s2);color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:5px 8px;font:inherit}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:640px}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mu);font-weight:500;cursor:pointer;user-select:none}tbody tr.cl:hover{background:var(--s2);cursor:pointer}
+.flow{display:flex;gap:6px;flex-wrap:wrap}.st{flex:1;min-width:92px;padding:8px;border:1px solid var(--bd);border-radius:6px;font-size:11px}.st.done{border-color:#10b98188;color:var(--em)}.st.act{border-color:var(--cy);color:var(--cy);box-shadow:0 0 0 1px #22d3ee44}
+.bar{height:6px;background:var(--s2);border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;background:var(--vi)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--s1);border-left:1px solid var(--bd);padding:16px;overflow:auto;z-index:9;padding-top:calc(16px + env(safe-area-inset-top,0px))}
+pre{background:var(--s2);padding:8px;border-radius:6px;overflow:auto;margin:0;font-size:11px}.mu{color:var(--mu)}
+.card,.grid>*{min-width:0}.card{overflow-wrap:anywhere}input,select{max-width:100%}
+.badge{max-width:100%;white-space:normal;overflow-wrap:anywhere;vertical-align:middle}
+td.w{white-space:normal;min-width:160px;overflow-wrap:anywhere}.st{overflow-wrap:anywhere}
+.kpi .v{font-size:clamp(16px,2.2vw,24px);overflow-wrap:anywhere;line-height:1.25}
+pre{white-space:pre-wrap;overflow-wrap:anywhere}aside{z-index:5}
+#dr:not(:empty)::before{content:"";position:fixed;inset:0;background:#000a;z-index:8;animation:fd .15s}
+.drawer{z-index:10;box-shadow:-12px 0 32px #000a;animation:sl .2s ease-out;overflow-wrap:anywhere}
+@keyframes sl{from{transform:translateX(24px);opacity:0}}@keyframes fd{from{opacity:0}}
+.card,button.b,nav button{transition:border-color .15s,background .15s,transform .15s}.card:hover{border-color:#3a3a4a}button.b:active{transform:scale(.97)}
+:focus-visible{outline:2px solid var(--cy);outline-offset:1px}tr.cl:focus-visible{outline-offset:-2px}
+#toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--vi);padding:8px 14px;border-radius:6px;z-index:20;max-width:90%}
+.pr{height:3px;background:var(--cy);border-radius:2px;transition:width .5s}.st.act{animation:pu 1.6s infinite}@keyframes pu{50%{box-shadow:0 0 0 3px #22d3ee33}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:720px){.app{flex-direction:column}aside{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap}.foot,.brand{display:none}nav{display:flex;flex-wrap:wrap}nav button{width:auto}}
+</style></head><body><div class="app">
+<aside><div class="brand"><b>BATTLE ARENA</b><small>AI COMMAND CENTER</small></div><nav id="nav"></nav>
+<div class="foot"><span class="badge demo">DEMO MODE</span><br>v0.2 demo · Agent: not connected<br>No API, no credits, no keys.</div></aside>
+<main><div class="top"><h1 id="title"></h1><span class="badge demo">DEMO MODE · simulated data</span><span style="flex:1"></span>
+<select id="phase"></select><button class="b p" id="run">Run Demo Simulation</button><button class="b" id="step">Step</button><button class="b" id="reset">Reset</button><button class="b" id="exp">Export JSONL</button></div>
+<div id="view"></div></main></div><div id="dr"></div>
+<script>
+// ---- fictional data (not from the live Arena) ----
+const PH=["RECON","SEARCH","PROFILE EVAL","ASSESSMENT","OFFER QUEUE","MARKET","CLOSING"];
+const REQ=[{id:"R-101",role:"Python Backend Engineer",skills:["python","sql","docker"],minA:65,maxN:60,maxC:24,slots:2,pts:10},
+{id:"R-102",role:"Machine Learning Engineer",skills:["python","pytorch","mlops"],minA:70,maxN:45,maxC:32,slots:1,pts:15},
+{id:"R-103",role:"Data Engineer",skills:["sql","spark","airflow"],minA:60,maxN:60,maxC:26,slots:1,pts:10}];
+// cov = skill coverage 0-1; a = assessment (null = unknown); n = notice days; c = CTC lakhs; nsk = skills listed; fw = fraud words in notes; pos = positive note
+const CAND=[
+{id:"C-1001",name:"Aarav Mehta",req:"R-101",exp:5,cov:1,a:82,n:30,c:18,nsk:9,fw:0,pos:1},
+{id:"C-1002",name:"Diya Nair",req:"R-101",exp:3,cov:.67,a:71,n:45,c:15,nsk:7,fw:0,pos:0},
+{id:"C-1003",name:"Kabir Rao",req:"R-101",exp:1,cov:1,a:99,n:15,c:12,nsk:22,fw:0,pos:0},
+{id:"C-1004",name:"Meera Iyer",req:"R-102",exp:6,cov:.67,a:78,n:30,c:28,nsk:11,fw:0,pos:1},
+{id:"C-1005",name:"Rohan Das",req:"R-102",exp:4,cov:.33,a:null,n:60,c:30,nsk:8,fw:0,pos:0},
+{id:"C-1006",name:"Sana Qureshi",req:"R-103",exp:7,cov:1,a:74,n:20,c:22,nsk:10,fw:0,pos:1},
+{id:"C-1007",name:"Vikram Joshi",req:"R-103",exp:2,cov:.67,a:55,n:30,c:18,nsk:6,fw:0,pos:0},
+{id:"C-1008",name:"Tara Menon",req:"R-101",exp:8,cov:.67,a:80,n:75,c:20,nsk:12,fw:1,pos:0}];
+// ---- mirrors Agent.evaluate() in agent.py (without LLM blend: no LLM score exists in demo) ----
+const cl=(x,l=0,h=1)=>Math.min(Math.max(x,l),h);
+function evalC(c){const q=REQ.find(r=>r.id===c.req),fl=[];let ok=true,unk=0;
+ if(c.a==null)unk++;else if(c.a<q.minA-2){ok=false;fl.push("below_bar")}
+ if(c.n>q.maxN){ok=false;fl.push("notice")} if(c.c>q.maxC){ok=false;fl.push("ctc")}
+ let risk=0;if(c.fw){risk+=.45;fl.push("fraud_words")}
+ if(c.nsk>28||(c.exp<1.5&&c.nsk>18)){risk+=.25;fl.push("skill_stuffing")}
+ if(c.exp>45||(c.a!=null&&c.a>=99)){risk+=.2;fl.push("implausible")}
+ const span=Math.max(100-q.minA,1),am=c.a!=null?cl((c.a-q.minA)/span):.3,ns=cl(1-c.n/q.maxN),cs=cl(1-c.c/q.maxC),ex=Math.min(c.exp,10)/10,note=c.pos?.1:0;
+ const parts=[["Skill coverage",.5,c.cov],["Assessment",.25,am,c.a==null],["Notice period",.05,ns],["CTC",.05,cs],["Experience",.05,ex],["Positive note",1,note]];
+ const fit=.5*c.cov+.25*am+.05*ns+.05*cs+.05*ex+note;
+ const okAll=ok&&risk<.6;const gate=(f,r)=>fit>=f&&risk<=r;const[mf,mr]=window.CL?[.62,.25]:[.52,.35];
+ const dec=!okAll?"Excluded (hard gate)":gate(mf,mr)?(c.a==null?"Hold: unverified":"Offer-eligible ("+(window.CL?"closing":"market")+")"):"Below offer gate";
+ return{q,fl,ok:okAll,unk,risk:+risk.toFixed(2),fit:+fit.toFixed(3),parts,dec,am,ns,cs,ex,note}}
+CAND.forEach(c=>Object.assign(c,{e:evalC(c)}));
+// ---- deterministic simulation script ----
+const SIM=[[0,"INFO","Requisitions read (free call)","R-101..103","recon step 1"],[1,"INFO","Wide search paged until pool stopped improving","R-101","search budget"],
+[2,"INFO","Full profiles bought for top slice","C-1001..1008","batch pricing"],[2,"WARN","skill_stuffing + implausible flagged","C-1003","fraud heuristics"],
+[2,"WARN","notice 75d > max 60d; fraud_words in notes","C-1008","hard gate"],[3,"INFO","Assessment bought: expected loss > cost","C-1001","worth() true"],
+[3,"INFO","Assessment skipped: profile already below bar","C-1007","worth() false"],[4,"INFO","Offer queue built: verified first, spares for sniping","R-101","queue"],
+[5,"OK","SIGNED C-1001 -> R-101 (simulated)","C-1001","offer accepted"],[5,"OK","SIGNED C-1006 -> R-103 (simulated)","C-1006","offer accepted"],
+[5,"WARN","offer C-1002 -> R-101 rejected: requisition_full","C-1002","simulated rejection"],[6,"INFO","R-102 closing offers not worth it","R-102","p(accept)*points < cost*PF"]];
+const KEY="x";let S={i:0,tab:"Overview",sort:["id",1],page:0,q:"",role:"",sev:"",json:false,timer:null};
+const TABS=["Overview","Candidate Explorer","Requisition Pipeline","Decision Intelligence","Activity Logs","System Configuration","Live Agent"];
+const $=s=>document.querySelector(s),ev=()=>SIM.slice(0,S.i),ph=()=>S.i?SIM[S.i-1][0]:0;
+const signed=()=>ev().filter(e=>e[2].startsWith("SIGNED")).length;
+const bd=(t,c="")=>`<span class="badge ${c}">${t}</span>`;
+function render(){window.CL=ph()>=6;CAND.forEach(c=>c.e=evalC(c));$("#title").textContent=S.tab;$("#nav").innerHTML=TABS.map(t=>`<button class="${t==S.tab?"on":""}" data-t="${t}">${t}</button>`).join("");
+$("#phase").innerHTML=PH.map((p,i)=>`<option value="${i}" ${i==ph()?"selected":""}>Phase: ${p}</option>`).join("");
+$("#step").disabled=$("#run").disabled=S.i>=SIM.length;$("#run").textContent=S.timer?"Running…":"Run Demo Simulation";
+$("#view").innerHTML=({Overview:vOver,"Candidate Explorer":vCand,"Requisition Pipeline":vReq,"Decision Intelligence":vDec,"Activity Logs":vLog,"System Configuration":vCfg,"Live Agent":vLive})[S.tab]()}
+function vOver(){const p=ph(),cands=S.i>=3?8:S.i>=1?"scanning":0,ev_=S.i>=3?CAND.filter(c=>c.e.ok).length:"—";
+const k=[["Candidates in demo pool",S.i>=3?8:0],["Profiles evaluated",S.i>=3?8:0],["Pass hard gates",ev_],["Requisitions",3],["Offers accepted (sim)",signed()],["Credits consumed","0 (none spent)"]];
+return `<div class="pr" style="width:${S.i/SIM.length*100}%"></div><h2 style="margin-top:8px">Agent Command Center · simulation ${S.i}/${SIM.length}</h2><p class="mu">Monitor candidate intelligence, evaluation decisions and recruitment operations. All values are simulated demonstration data.</p>
+<div class="grid">${k.map(x=>`<div class="card kpi"><div class="v">${x[1]}</div><div class="l">${x[0]}</div></div>`).join("")}</div>
+<div class="card"><h2>Agent workflow (demo state)</h2><div class="flow">${PH.map((n,i)=>`<div class="st ${S.i&&i<p?"done":S.i&&i==p?"act":""}">${n}<br>${S.i&&i<p?"completed":S.i&&i==p?"active":"pending"}</div>`).join("")}</div></div>
+<div class="card"><h2>Fit score by candidate (derived from displayed rules)</h2>${fitChart()}</div><div class="grid w"><div class="card"><h2>Requisition performance</h2><div class="tw">${reqTable()}</div></div>
+<div class="card"><h2>Recent decisions (simulated)</h2>${ev().slice(-5).reverse().map(e=>`<div>${bd(e[1],e[1]=="OK"?"g":e[1]=="WARN"?"a":"c")} ${e[2]} <span class="mu">${e[3]}</span></div>`).join("")||'<span class="mu">Press Run or Step.</span>'}</div></div>
+<div class="card"><h2>System health</h2>Demo engine: ${bd("running locally","c")} API connection: ${bd("Not configured","a")} Credentials: ${bd("Not provided","a")} Checkpoint: ${bd("Simulated")}</div>`}
+function fitChart(){const H=110,y=v=>10+H*(1-v);return `<svg viewBox="0 0 400 150" width="100%" role="img" aria-label="Fit score by candidate"><line x1="0" x2="400" y1="${y(window.CL?.62:.52)}" y2="${y(window.CL?.62:.52)}" stroke="#f59e0b" stroke-dasharray="4"/>${CAND.map((c,i)=>`<g><title>${c.name}: fit ${c.e.fit}, risk ${c.e.risk}</title><rect x="${10+i*48}" y="${y(c.e.fit)}" width="36" height="${H*c.e.fit}" fill="${c.e.ok?"#8b5cf6":"#ef4444"}" rx="2"/><text x="${28+i*48}" y="135" fill="#8a8a99" font-size="9" text-anchor="middle">${c.id.slice(2)}</text><text x="${28+i*48}" y="${y(c.e.fit)-3}" fill="#e8e8ee" font-size="9" text-anchor="middle">${c.e.fit.toFixed(2)}</text></g>`).join("")}</svg><div class="mu">Violet = passes hard gates, red = excluded. Dashed amber line = current offer gate (${window.CL?"0.62, closing":"0.52, market"}); switch the phase selector to CLOSING to see it tighten. Hover a bar for details.</div>`}
+function reqTable(){const f={"R-101":0,"R-102":0,"R-103":0};ev().forEach(e=>{const m=e[2].match(/-> (R-\d+)/);if(e[2].startsWith("SIGNED")&&m)f[m[1]]++});
+return `<table><tr><th>Role</th><th>Skills</th><th>Slots</th><th>Filled</th><th>Left</th><th>Avg fit</th></tr>${REQ.map(r=>{const cs=CAND.filter(c=>c.req==r.id);const a=cs.reduce((s,c)=>s+c.e.fit,0)/cs.length;return `<tr><td>${r.role}</td><td>${r.skills.join(", ")}</td><td>${r.slots}</td><td>${f[r.id]}</td><td>${r.slots-f[r.id]}</td><td>${a.toFixed(2)}</td></tr>`}).join("")}</table>`}
+function vReq(){return `<div class="card"><p class="mu">Fictional demo requisitions, not live Arena data.</p><div class="tw"><table><tr><th>ID</th><th>Role</th><th>Min assess</th><th>Max notice (d)</th><th>Max CTC (LPA)</th><th>Points/slot</th><th>Queue</th></tr>${REQ.map(r=>`<tr class="cl" tabindex="0" data-r="${r.id}"><td>${r.id}</td><td>${r.role}</td><td>${r.minA}</td><td>${r.maxN}</td><td>${r.maxC}</td><td>${r.pts}</td><td>${CAND.filter(c=>c.req==r.id&&c.e.ok).length}</td></tr>`).join("")}</table></div></div><div class="card">${reqTable()}</div>`}
+function vCand(){const [k,d]=S.sort;let rows=CAND.filter(c=>(!S.role||c.req==S.role)&&(!S.el||(S.el=="y")==c.e.ok)&&(!S.rk||(S.rk=="h")==(c.e.risk>.35))&&(c.name+c.id+" "+c.req).toLowerCase().includes(S.q.toLowerCase()));const tot=rows.length,PS=5,pg=Math.min(S.page,Math.max(Math.ceil(tot/PS)-1,0));
+const val=c=>({id:c.id,name:c.name,fit:c.e.fit,assess:c.a??-1,risk:c.e.risk,exp:c.exp})[k];rows.sort((a,b)=>val(a)>val(b)?d:-d);S.page=pg;rows=rows.slice(pg*PS,pg*PS+PS);
+return `<div class="top"><input id="q" placeholder="Search name or ID" value="${S.q}"><select id="role"><option value="">All requisitions</option>${REQ.map(r=>`<option value="${r.id}" ${S.role==r.id?"selected":""}>${r.id} ${r.role}</option>`).join("")}</select><select id="el"><option value="">Any eligibility</option><option value="y" ${S.el=="y"?"selected":""}>Eligible</option><option value="n" ${S.el=="n"?"selected":""}>Excluded</option></select><select id="rk"><option value="">Any risk</option><option value="l" ${S.rk=="l"?"selected":""}>Risk ≤ 0.35</option><option value="h" ${S.rk=="h"?"selected":""}>Risk > 0.35</option></select></div>
+<div class="card tw"><table><tr>${[["id","ID"],["name","Name"],["exp","Exp (y)"],["fit","Fit"],["assess","Assessment"],["risk","Risk"]].map(h=>`<th data-s="${h[0]}">${h[1]}${k==h[0]?d>0?" ▲":" ▼":""}</th>`).join("")}<th>Req</th><th>Status</th></tr>
+${rows.map(c=>`<tr class="cl" tabindex="0" data-c="${c.id}"><td>${c.id}</td><td>${c.name}</td><td>${c.exp}</td><td>${c.e.fit}</td><td>${c.a??"unknown"}</td><td>${bd(c.e.risk,c.e.risk>.35?"r":c.e.risk>0?"a":"g")}</td><td>${c.req}</td><td>${bd(c.e.ok?"eligible":"excluded",c.e.ok?"g":"r")}</td></tr>`).join("")||`<tr><td colspan=8 class="mu">No candidates match.</td></tr>`}</table><div class="top" style="margin:8px 0 0"><button class="b" data-pg="-1" ${pg<1?"disabled":""}>Prev</button><span class="mu">Page ${pg+1} of ${Math.max(Math.ceil(tot/PS),1)} · ${tot} candidates</span><button class="b" data-pg="1" ${(pg+1)*PS>=tot?"disabled":""}>Next</button></div></div>`}
+function explain(c){const e=c.e;return `<h2>${c.id} · ${c.name} → ${e.q.role}</h2><div class="mu">Skill coverage ${Math.round(c.cov*100)}% of ${e.q.skills.join(", ")}</div><div class="bar"><i style="width:${c.cov*100}%"></i></div><div>Assessment ${c.a??"unknown"} (bar ${e.q.minA}) · Notice ${c.n}d (max ${e.q.maxN}) · CTC ${c.c} LPA (max ${e.q.maxC}) · ${c.exp}y</div>
+<table style="min-width:0"><tr><th>Component</th><th>Weight</th><th>Input</th><th>Contrib.</th></tr>${e.parts.map(p=>`<tr><td>${p[0]}${p[3]?" "+bd("unknown","a"):""}</td><td>${p[1]==1?"≤0.10":p[1]}</td><td>${p[0]=="Positive note"?p[2]:(+p[2]).toFixed(2)}</td><td>${(p[1]==1?p[2]:p[1]*p[2]).toFixed(3)}</td></tr>`).join("")}<tr><td><b>Fit</b></td><td></td><td></td><td><b>${e.fit}</b></td></tr></table>
+${e.unk?`<p class="mu">Assessment is unknown. agent.py uses a neutral prior of 0.3 for this component and counts the field as unknown; the demo shows the same, not a measured value. LLM blend (0.75·fit + 0.25·llm/10) is not applied: no LLM score in demo.</p>`:""}
+<p>Gates: below_bar/notice/ctc → exclude. Flags: ${e.fl.join(", ")||"none"}. Risk ${e.risk} (excluded at ≥0.6).<br>Offer gate (${window.CL?"closing":"market"}): fit ≥ ${window.CL?"0.62":"0.52"}, risk ≤ ${window.CL?"0.25":"0.35"}, and verified if a bar exists.</p><p><b>Decision:</b> ${e.dec}</p>`}
+function vDec(){const id=S.sel||"C-1001";const c=CAND.find(x=>x.id==id);return `<div class="top"><select id="sel">${CAND.map(x=>`<option ${x.id==id?"selected":""} value="${x.id}">${x.id} ${x.name}</option>`).join("")}</select><span class="mu">Formula mirrors Agent.evaluate() in agent.py.</span></div><div class="card">${explain(c)}</div>
+<div class="card"><h2>Decision timeline (simulated)</h2>${ev().map(e=>`<div>${bd(PH[e[0]])} ${e[2]}</div>`).join("")||'<span class="mu">Run the simulation.</span>'}</div>`}
+function vLog(){const L=ev().map((e,i)=>({id:i+1,phase:PH[e[0]],level:e[1],msg:e[2],ref:e[3],reason:e[4],source:"demo-sim"})).filter(l=>(!S.sev||l.level==S.sev)&&JSON.stringify(l).toLowerCase().includes(S.q.toLowerCase()));
+return `<div class="top"><input id="q" placeholder="Search logs" value="${S.q}"><select id="sev"><option value="">All severities</option>${["INFO","OK","WARN"].map(s=>`<option ${S.sev==s?"selected":""}>${s}</option>`).join("")}</select><button class="b" id="jt">${S.json?"Readable view":"JSON view"}</button></div>
+<div class="card tw">${S.json?`<pre>${L.map(l=>JSON.stringify(l)).join("\n")||"[]"}</pre>`:`<table><tr><th>#</th><th>Severity</th><th>Event</th><th>ID</th><th>Reason</th><th>Source</th></tr>${L.map(l=>`<tr><td>${l.id}</td><td>${l.level}</td><td class="w">${l.msg}</td><td>${l.ref}</td><td class="w">${l.reason}</td><td>${l.source}</td></tr>`).join("")||`<tr><td colspan=6 class="mu">No events yet. Run the simulation.</td></tr>`}</table>`}</div>`}
+function vLive(){setTimeout(loadLive,0);return `<div class="card"><h2>Local Python agent connection</h2><p class="mu">Read-only connection to this project's local state files. It does not call the Arena API, spend credits, or send offers. Start <code>agent.py</code> separately with authorised credentials to populate live state.</p><div class="top"><span id="liveStatus" class="badge a">Checking local bridge…</span><button class="b p" id="refreshLive">Refresh status</button></div><div id="livePanel" class="mu">Loading local agent state…</div></div><div class="grid w"><div class="card"><h2>Checkpoint state</h2><pre id="liveState">Waiting for local bridge…</pre></div><div class="card"><h2>Recent agent decisions</h2><pre id="liveLogs">Waiting for local bridge…</pre></div></div>`}
+async function loadLive(){const statusEl=$("#liveStatus"),panel=$("#livePanel"),stateEl=$("#liveState"),logsEl=$("#liveLogs");if(!statusEl||!panel)return;try{const [sr,st,lg]=await Promise.all([fetch("/api/status"),fetch("/api/state"),fetch("/api/logs?limit=40")]);if(!sr.ok||!st.ok||!lg.ok)throw new Error("Local bridge returned HTTP error");const status=await sr.json(),state=await st.json(),logs=await lg.json();statusEl.className="badge "+(status.state_available?"g":"a");statusEl.textContent=status.state_available?"Local bridge connected · state found":"Local bridge connected · waiting for agent state";panel.innerHTML=`<div class="grid"><div class="card kpi"><div class="v">${status.candidate_count??0}</div><div class="l">Candidates in checkpoint</div></div><div class="card kpi"><div class="v">${status.signed_count??0}</div><div class="l">Signed in checkpoint</div></div><div class="card kpi"><div class="v">${status.log_lines??0}</div><div class="l">Decision log entries</div></div><div class="card kpi"><div class="v">${status.key_configured?"Configured":"Missing"}</div><div class="l">ARENA_KEY environment (never shown)</div></div></div><p class="mu">State file: ${status.state_file_exists?"found":"not created yet"} · Last updated: ${status.state_mtime||"—"} · This is local process state, not proof of Arena connectivity.</p>`;stateEl.textContent=JSON.stringify(state,null,2);logsEl.textContent=(logs.entries||[]).map(x=>JSON.stringify(x)).join("\n")||"No agent decisions logged yet."}catch(err){statusEl.className="badge r";statusEl.textContent="Local bridge unavailable";panel.textContent="Open this dashboard through start-dashboard.ps1 / python dashboard_server.py, not directly as a file. Details: "+err.message;stateEl.textContent="—";logsEl.textContent="—"}}
+function vCfg(){return `<div class="card"><p class="mu">Knobs read by agent.py (shown, not editable: the demo never runs the agent).</p><table style="min-width:0"><tr><th>Variable</th><th>Default in agent.py</th></tr>${[["PENALTY_FACTOR",0.05],["POINTS_DEFAULT",10],["RATE_LIMIT_RPS",8.5],["SEARCH_WAVE",6],["SEARCH_PATIENCE",60],["SEARCH_BUDGET_FRAC",0.06],["SPARE_MIN",2],["LLM_MAX_CALLS",120],["STATE_DIR","./state"]].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table><p>ARENA_KEY: ${bd("never requested here","a")}</p></div>`}
+// ---- events ----
+document.addEventListener("click",e=>{const t=e.target.closest("[data-t]"),c=e.target.closest("[data-c]"),s=e.target.closest("[data-s]");
+if(e.target.dataset.pg){S.page+=+e.target.dataset.pg;render()}else if(e.target.closest("[data-r]")){const q=REQ.find(r=>r.id==e.target.closest("[data-r]").dataset.r);$("#dr").innerHTML=`<div class="drawer"><button class="b" id="cx">Close</button><div class="card" style="margin-top:10px"><h2>${q.id} ${q.role}</h2><div class="mu">Demo requisition, not live API data</div><p>Skills: ${q.skills.join(", ")}<br>Bar: assess ≥${q.minA}, notice ≤${q.maxN}d, CTC ≤${q.maxC} LPA · ${q.slots} slot(s) × ${q.pts} pts</p>${CAND.filter(c=>c.req==q.id).sort((a,b)=>b.e.fit-a.e.fit).map(c=>`<div>${c.id} ${c.name} fit ${c.e.fit} ${bd(c.e.dec,c.e.ok?"g":"r")}</div>`).join("")}</div></div>`}else if(t){S.tab=t.dataset.t;S.q="";S.page=0;render()}else if(s){S.sort=[s.dataset.s,S.sort[0]==s.dataset.s?-S.sort[1]:1];render()}
+else if(c){const x=CAND.find(k=>k.id==c.dataset.c);$("#dr").innerHTML=`<div class="drawer"><button class="b" id="cx">Close</button><div class="card" style="margin-top:10px">${explain(x)}</div></div>`}
+else if(e.target.id=="cx"||e.target.id=="dr")$("#dr").innerHTML="";else if(e.target.id=="refreshLive")loadLive();else if(e.target.id=="jt"){S.json=!S.json;render()}});
+document.addEventListener("input",e=>{if(e.target.id=="q"){S.q=e.target.value;S.page=0;const p=e.target.selectionStart;render();const i=$("#q");i.focus();i.setSelectionRange(p,p)}
+if(["role","sev","sel","el","rk"].includes(e.target.id)){S.page=0;({role:()=>S.role=e.target.value,sev:()=>S.sev=e.target.value,sel:()=>S.sel=e.target.value,el:()=>S.el=e.target.value,rk:()=>S.rk=e.target.value})[e.target.id]();render()}
+if(e.target.id=="phase"){const p=+e.target.value;S.i=p==0?0:SIM.findLastIndex(x=>x[0]<=p)+1;render()}});
+$("#step").onclick=()=>{if(S.i<SIM.length)S.i++;render()};
+$("#run").onclick=()=>{if(S.timer)return;S.timer=setInterval(()=>{if(S.i>=SIM.length){clearInterval(S.timer);S.timer=null}else S.i++;render()},700);render()};
+$("#reset").onclick=()=>{clearInterval(S.timer);S.timer=null;S.i=0;render();toast("Demo reset")};
+function toast(m){let t=$("#toast");if(!t){t=document.createElement("div");t.id="toast";document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(toast.k);toast.k=setTimeout(()=>t.hidden=true,2200)}
+document.addEventListener("keydown",e=>{if(e.key=="Escape")$("#dr").innerHTML="";if(e.key=="Enter"&&e.target.matches("tr.cl"))e.target.click()});
+$("#exp").onclick=()=>{if(!S.i)return toast("No events to export yet. Run or step the simulation first.");const t=ev().map((e,i)=>JSON.stringify({id:i+1,phase:PH[e[0]],level:e[1],msg:e[2],ref:e[3],reason:e[4],source:"demo-sim",simulated:true})).join("\n")||"";
+const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"application/x-ndjson"}));a.download="demo-events.jsonl";a.click();toast("Exported "+S.i+" simulated events")};
+render();
+</script></body></html>
